@@ -66,7 +66,7 @@ class AlternativeWord(models.Model):
         verbose_name = 'Alternatives Wort'
         verbose_name_plural = 'Alternative Wörter'
 
-
+#create class pdfFile
 class PdfFile(models.Model):
     pdf_file = models.FileField(upload_to='pdfFile/')
     title = models.CharField(max_length=100, default='default title')
