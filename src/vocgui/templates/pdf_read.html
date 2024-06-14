@@ -1,0 +1,25 @@
+{% block content %}
+  <h1>Pdf Read</h1>
+
+  <table class="table">
+    <thead>
+        <tr>
+            <th> Title</th>
+            <th>PDF_FILE</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pdf in pdfs %}
+        <tr>
+            <td>{{ pdf.title }}</td>
+            <td><a href="{{ pdf.pdf_file.url }}">{{ pdf.pdf_file.name }}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+  {% for page_num, text in pdf_content.items %}
+    <h2>Page {{ page_num }}</h2>
+    <p>{{ text }}</p>
+    {% endfor %}
+{% endblock %}

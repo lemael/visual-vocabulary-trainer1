@@ -1,0 +1,15 @@
+<head>
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% block content %}
+</head>
+  <h1>Upload Pdf</h1>
+  <div class="form-group  d-flex justify-content-center align-items-center">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" class="btn btn-secondary">Upload File</button>
+  </form>
+</div>
+{% endblock %}
