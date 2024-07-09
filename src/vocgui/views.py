@@ -1,19 +1,21 @@
 """
 Simple REST API
 """
-from django.http import HttpResponse  # pylint: disable=E0401
-from django.core import serializers  # pylint: disable=E0401
-from django.shortcuts import render, redirect  # pylint: disable=E0401
-
-from .models import TrainingSet, Document, AlternativeWord, PdfFile
-
-from .forms import PdfForm
-
-from PyPDF2 import PdfReader
-
 import os
 
+import pyttsx3
+from django.contrib.auth.decorators import login_required
+from django.core import serializers  # pylint: disable=E0401
+from django.http import HttpResponse  # pylint: disable=E0401
+from django.shortcuts import redirect, render  # pylint: disable=E0401
+from gtts import gTTS
+from PyPDF2 import PdfReader
 
+from .forms import PdfForm
+from .models import AlternativeWord, Document, PdfFile, TrainingSet
+
+
+@login_required
 
 def index(request):  # pylint: disable=W0613
     """
@@ -40,28 +42,83 @@ def api_documents(request, training_set_id=None):  # pylint: disable=W0613
     documents_list = serializers.serialize('json', documents)
     return HttpResponse(documents_list, content_type="application/json")
 
+
 def api_alternative_words(request, document_id=None):
     """
     API endpoint to get all alternative words of a document
     """
 
-    alternative_words = AlternativeWord.objects.filter(document_id = document_id)
+    alternative_words = AlternativeWord.objects.filter(document_id=document_id)
     alternative_words_list = serializers.serialize('json', alternative_words)
-    return HttpResponse(alternative_words_list, content_type="application/json")
+    return HttpResponse(alternative_words_list,
+                        content_type="application/json")
+
+import io
+import os
+
+from django.shortcuts import render
+from gtts import gTTS
+from PyPDF2 import PdfReader
+
+from .models import PdfFile
 
 
 def pdf_read(request):
     pdfs = PdfFile.objects.all()
-    for x in pdfs:
-       pdf_path = os.path.join('/home/mael/Dokumente/visual-vocabulary-trainer1/src/media/', x.pdf_file.name)
-       pdf_reader = PdfReader(open(pdf_path, 'rb'))
+    dernier_objet = pdfs.last()
 
-    page_content = {}
+    # Supprimer tous les objets sauf le dernier
+    for objet in pdfs:
+        if objet != dernier_objet:
+            objet.delete()
 
-    for indx, pdf_page in enumerate(pdf_reader.pages):
-        page_content[indx + 1] = pdf_page.extract_text()
-    print(page_content)
-    return render(request, 'pdf_read.html', { 'pdf_content': page_content, 'pdfs': pdfs})
+    if not dernier_objet:
+        return render(request, 'pdf_read.html', {
+            'error': "Aucun fichier PDF trouvé."
+        })
+
+    pdf_path = os.path.join(
+        '/home/mael/Dokumente/visual-vocabulary-trainer1/src/media/',
+        dernier_objet.pdf_file.name
+    )
+
+    try:
+        with open(pdf_path, 'rb') as pdf_file:
+            pdf_reader = PdfReader(pdf_file)
+            page_content = {}
+            for indx, pdf_page in enumerate(pdf_reader.pages):
+                page_content[indx + 1] = pdf_page.extract_text()
+    except FileNotFoundError:
+        return render(request, 'pdf_read.html', {
+            'error': f"Le fichier {pdf_path} n'a pas été trouvé."
+        })
+
+    # Convertir le texte en parole
+    audio_fp = io.BytesIO()
+    speech = gTTS(text=' '.join(page_content.values()), lang='fr')
+    speech.write_to_fp(audio_fp)
+    audio_fp.seek(0)
+    mp3_filename = dernier_objet.title+".mp3"
+    # Enregistrer le résultat en tant que fichier MP3
+    mp3_path = os.path.join(
+        "/home/mael/Dokumente/visual-vocabulary-trainer1/src/media/",
+        mp3_filename
+    )
+    with open(mp3_path, 'wb') as f:
+        f.write(audio_fp.getbuffer())
+
+    # Vérifier que le fichier MP3 a été créé
+    if os.path.exists(mp3_path):
+        print("Le fichier MP3 a été créé avec succès.")
+    else:
+        print("Une erreur s'est produite lors de la création du fichier MP3.")
+
+    return render(request, 'pdf_read.html', {
+        'pdf_content': page_content,
+        'pdfs': [dernier_objet],
+        'audio_file': mp3_filename
+    })
+
 
 
 def upload_pdf(request):

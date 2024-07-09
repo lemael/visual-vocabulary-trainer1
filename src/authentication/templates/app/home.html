@@ -1,0 +1,19 @@
+{% extends 'base.html' %} {% block extra_css %} {% load static %}
+<link rel="stylesheet" href="{% static 'authentication/static/style.css' %}" />
+{% endblock%} {% block content %}
+<link href="{% static 'authentication/static/style.css' %}" rel="stylesheet" />
+<div
+  class="bg-image d-flex justify-content-center align-items-center mt-5"
+  style="background-image: url(/media/acceuil.jpg); height: 100vh"
+>
+  <p
+    class="h3 p-3 mb-2 bg-light text-dark"
+    style="border-radius: 0 170px 0 120px"
+  >
+    vocabulary <br />
+    Learn new words to improve your vocabulary to help you communicate well in
+    English.
+  </p>
+</div>
+
+{% endblock %}

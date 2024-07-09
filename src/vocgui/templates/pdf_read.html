@@ -18,6 +18,15 @@
         {% endfor %}
     </tbody>
   </table>
+  <h2>Fichier Audio</h2>
+        {% if audio_file %}
+            <audio controls>
+                <source src="{% url 'generate_audio' pdf.id %}" type="audio/mpeg">
+                Votre navigateur ne supporte pas la balise audio.
+            </audio>
+        {% else %}
+            <p>Le fichier audio n'a pas pu être créé.</p>
+        {% endif %}
   {% for page_num, text in pdf_content.items %}
     <h2>Page {{ page_num }}</h2>
     <p>{{ text }}</p>

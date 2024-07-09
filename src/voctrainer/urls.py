@@ -23,6 +23,7 @@ from vocgui import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('vocgui.urls')),
+    path('', include('authentication.urls')),
     path('pdf', views.pdf_read, name ='pdf_read'),
     path('pdf/upload', views.upload_pdf, name ='upload_pdf'),
 ]
