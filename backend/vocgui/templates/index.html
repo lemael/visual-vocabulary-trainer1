@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block content%}
+<main role="main" class="flex-shrink-0">
+  <div class="container mt-5 mb-5">
+    <div class="row no-gutters">
+      <div class="col-xs-12" style="height: 100px"></div>
+      <div class="col col-lg-5 offset-lg-3 text-center">
+        <h1 class="mt-5">Categories</h1>
+        <div id="div_training_set text-center">
+          <select id="pageSelect" class="form-control center mt-5">
+            <option value="">Bitte Wählen</option>
+            <option value="{% url 'grammar' %}">Grammar</option>
+            <option value="{% url 'vocabulary' %}">Vocabulary</option>
+            <option value="{% url 'audio' %}">Audio</option>
+          </select>
+        </div>
+        <div class="col-xs-12" style="height: 50px"></div>
+        <div id="div_ask_document" class="text-center"></div>
+        <div class="col-xs-12" style="height: 50px"></div>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  document.getElementById("pageSelect").addEventListener("change", function () {
+    var url = this.value;
+    if (url) {
+      window.location.href = url;
+    }
+  });
+</script>
+{% endblock %}

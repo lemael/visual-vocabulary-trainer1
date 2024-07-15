@@ -1,0 +1,41 @@
+{% extends "base.html" %} {% block extra_head %} {% load static %}
+<link rel="stylesheet" href="{% static 'vocgui/static/style.css' %}" />
+
+{% endblock %} {% block content %}
+<div class="container mt-5">
+  <h1 class="text-dark mt-5">Bücher Zone</h1>
+</div>
+
+<div class="row mt-5">
+  <div class="col-8">
+    <img
+      src="../media/img1_au.jpg"
+      class="img-fluid"
+      style="height: 100%; width: 170%"
+    />
+  </div>
+  <div class="col-4">
+    <div style="height: auto; width: 70%">
+      <a href="#" class="list-group-item list-group-item-action">Level A1 </a>
+      <a href="#" class="list-group-item list-group-item-action">Level A2</a>
+      <a href="#" class="list-group-item list-group-item-action">Level B1</a>
+      <a href="#" class="list-group-item list-group-item-action">Level B2</a>
+      <a href="#" class="list-group-item list-group-item-action">Level C1</a>
+    </div>
+  
+    <img
+      src="../media/img2_au.jpg"
+      class="img-fluid"
+      style="
+        position: relative;
+       top:10%;
+        left: 1%;
+        max-height: 70%;
+        max-width: 70%;
+      "
+    />
+  </div>
+  </div>
+</div>
+
+{% endblock %}
